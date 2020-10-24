@@ -6,7 +6,7 @@ export const parseSizeLabel = (label: string, labelSizeMatcher: RegExp) => {
 		return null
 	}
 
-	return parseInt(matches[1], 10)
+	return parseFloat(matches[1])
 }
 
 export const getIssueSize = (issue: IIssue, labelSizeMatcher: RegExp) => {

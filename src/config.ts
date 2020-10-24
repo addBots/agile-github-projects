@@ -34,7 +34,7 @@ export const config = configFromEnv<IConfig>({
 			pollInterval: parseInt(getValue("REACT_APP_POLL_INTERVAL")) || 60e3,
 		},
 		general: {
-			labelSizeMatcher: /^size:(\d+)$/,
+			labelSizeMatcher: /^size:([+-]?([0-9]*[.])?[0-9]+)$/,
 		},
 	}),
 })

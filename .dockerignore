@@ -1,0 +1,9 @@
+node_modules
+src
+tsconfig.json
+package.json
+package-lock.json
+Dockerfile
+deploy.sh
+.prettier.js
+.eslintrc.js

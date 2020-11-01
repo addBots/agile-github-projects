@@ -1,7 +1,7 @@
 import { debounce } from "debounce"
 import create from "zustand"
 
-export type View = "assignee" | "labels"
+export type View = "assignee" | "labels" | "columns"
 
 type StateData = {
 	view: View

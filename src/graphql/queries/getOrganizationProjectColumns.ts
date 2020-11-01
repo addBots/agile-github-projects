@@ -14,6 +14,7 @@ export interface IUser {
 export interface ILabel {
 	id: string
 	name: string
+	color: string
 }
 
 export interface IIssue {
@@ -85,6 +86,7 @@ export const GET_ORGANIZATION_PROJECT_ITEMS = gql`
 											nodes {
 												id
 												name
+												color
 											}
 										}
 									}
@@ -103,6 +105,7 @@ export const GET_ORGANIZATION_PROJECT_ITEMS = gql`
 											nodes {
 												id
 												name
+												color
 											}
 										}
 									}

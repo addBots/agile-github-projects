@@ -1,4 +1,4 @@
-import { Radio } from "antd"
+import { Radio, Row } from "antd"
 import React, { useMemo } from "react"
 import styled from "styled-components"
 import { ColumnSelect } from "./ColumnSelect"
@@ -18,21 +18,32 @@ const Header = styled.div`
 	}
 `
 
-interface IRenderByAssigneePayload {
-	view: "assignee"
+const Container = styled.div`
+	background: #ececec;
+	padding: 20px 10px;
+	overflow-y: auto;
+`
+
+interface IRenderBasePayload {
 	organization: string
 	project: string
+}
+
+interface IRenderByAssigneePayload extends IRenderBasePayload {
+	view: "assignee"
 	columns: string[]
 }
 
-interface IRenderByLabelPayload {
+interface IRenderByLabelPayload extends IRenderBasePayload {
 	view: "labels"
-	organization: string
-	project: string
 	labels: string[]
 }
 
-type RenderPayload = IRenderByAssigneePayload | IRenderByLabelPayload
+interface IRenderByColumnPayload extends IRenderBasePayload {
+	view: "columns"
+}
+
+type RenderPayload = IRenderByAssigneePayload | IRenderByLabelPayload | IRenderByColumnPayload
 
 export interface IBoardViewProps {
 	children: (data: RenderPayload) => any
@@ -67,17 +78,24 @@ export const BoardView = ({ children }: IBoardViewProps) => {
 				project,
 				labels,
 			})
+		} else if (view === "columns" && organization && project) {
+			return children({
+				view,
+				organization,
+				project,
+			})
 		}
 
 		return null
 	}, [view, organization, project, labels, columns, children])
-	console.log(columns)
+
 	return (
 		<div>
 			<Header>
 				<Radio.Group value={view} defaultValue="assignee" onChange={(e) => setView(e.target.value)}>
 					<Radio.Button value="assignee">By Assignee</Radio.Button>
 					<Radio.Button value="labels">By Labels</Radio.Button>
+					<Radio.Button value="columns">By Columns</Radio.Button>
 				</Radio.Group>
 				<OrganizationSelect organization={organization} onChange={setOrganization} />
 				{organization && <ProjectSelect organization={organization} project={project} onChange={setProject} />}
@@ -93,7 +111,9 @@ export const BoardView = ({ children }: IBoardViewProps) => {
 					<LabelSelect organization={organization} project={project} labels={labels} onChange={setLabels} />
 				)}
 			</Header>
-			{content}
+			<Container>
+				<Row>{content}</Row>
+			</Container>
 		</div>
 	)
 }

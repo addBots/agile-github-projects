@@ -1,12 +1,10 @@
 import React, { useMemo } from "react"
-import { useParams } from "react-router"
 import { flattenDeep } from "lodash"
 import { useOrganizationProjectColumns, IIssueWithMetaData } from "./graphql/queries/getOrganizationProjectColumns"
 import { labelsFromProjectColumns, mapColumnToColor, filterNull } from "./utils"
 import styled from "styled-components"
 import { Row, Card, Col } from "antd"
 import { useConfig } from "./config"
-import { IProjectRoute } from "./types/RouteParams"
 import { getIssueSize } from "./utils/issueSize"
 
 const FlexCol = styled(Col)`
@@ -39,17 +37,18 @@ const Container = styled.div`
 `
 
 interface IProjectProps {
+	organization: string
+	project: string
 	labelNames: string[]
 }
 
-export const IssuesByLabels: React.FC<IProjectProps> = ({ labelNames }) => {
-	const { projectNumber } = useParams<IProjectRoute>()
+export const IssuesByLabels: React.FC<IProjectProps> = ({ organization, project, labelNames }) => {
 	const config = useConfig()
 	const {
 		behavior: { pollInterval },
 	} = useConfig()
 
-	const { data, loading, error } = useOrganizationProjectColumns("addBots", parseInt(projectNumber!), {
+	const { data, loading, error } = useOrganizationProjectColumns(organization, parseInt(project), {
 		pollInterval,
 	})
 

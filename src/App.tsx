@@ -11,6 +11,7 @@ import { PublicRoute, PrivateRoute } from "./common/Routes"
 import { CenteredSpin } from "./common/CenteredSpin"
 import { BoardView } from "./BoardView"
 import { IssuesByAssignee } from "./IssuesByAssignee"
+import { IssuesByLabels } from "./IssuesByLabels"
 
 seedCache()
 
@@ -73,6 +74,14 @@ const Routing: React.FC = () => {
 												organization={props.organization}
 												project={props.project}
 												columnNames={props.columns}
+											/>
+										)
+									} else if (props.view === "labels") {
+										return (
+											<IssuesByLabels
+												organization={props.organization}
+												project={props.project}
+												labelNames={props.labels}
 											/>
 										)
 									}

@@ -10,7 +10,7 @@ interface IProjectSelectProps {
 }
 
 export const ProjectSelect = ({ onChange, organization, project }: IProjectSelectProps) => {
-	const { data: projects, loading, error } = useOrganizationProjects(organization)
+	const { data: projects, loading } = useOrganizationProjects(organization)
 
 	if (loading) return <CenteredSpin />
 

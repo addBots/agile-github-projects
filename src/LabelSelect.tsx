@@ -12,7 +12,7 @@ interface ILabelSelectProps {
 }
 
 export const LabelSelect = ({ onChange, organization, project, labels }: ILabelSelectProps) => {
-	const { data: availableColumns, loading, refetch } = useOrganizationProjectColumns(organization, parseInt(project))
+	const { data: availableColumns, loading } = useOrganizationProjectColumns(organization, parseInt(project))
 	console.log(availableColumns)
 
 	const availableLabels = useMemo<string[]>(() => {

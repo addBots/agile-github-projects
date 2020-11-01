@@ -35,7 +35,7 @@ interface IRenderByLabelPayload {
 type RenderPayload = IRenderByAssigneePayload | IRenderByLabelPayload
 
 export interface IBoardViewProps {
-	children: ({}: RenderPayload) => any
+	children: (data: RenderPayload) => any
 }
 
 export const BoardView = ({ children }: IBoardViewProps) => {

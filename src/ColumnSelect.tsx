@@ -11,7 +11,7 @@ interface IColumnSelectProps {
 }
 
 export const ColumnSelect = ({ onChange, organization, project, columns }: IColumnSelectProps) => {
-	const { data: availableColumns, loading, refetch } = useOrganizationProjectColumns(organization, parseInt(project))
+	const { data: availableColumns, loading } = useOrganizationProjectColumns(organization, parseInt(project))
 	console.log(availableColumns)
 
 	if (loading) return <CenteredSpin />

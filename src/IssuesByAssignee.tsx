@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { useOrganizationProjectColumns, IIssueWithMetaData } from "./graphql/queries/getOrganizationProjectColumns"
-import { Col, Row, Card, Popover, Button } from "antd"
+import { Popover, Button } from "antd"
 import { flattenDeep, unionBy, uniq } from "lodash"
 import { filterUndefined, filterNull, mapColumnToColor } from "./utils"
 import styled from "styled-components"

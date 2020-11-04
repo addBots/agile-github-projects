@@ -1,6 +1,6 @@
-import { IIssue } from "../graphql/queries/getOrganizationProjectColumns"
+import { IIssueWithCardID } from "../graphql/queries/getOrganizationProjectColumns"
 
-export const sortIssuesByPriority = (issues: IIssue[], priorities: string[]) => {
+export const sortIssuesByPriority = (issues: IIssueWithCardID[], priorities: string[]) => {
 	return issues.sort((lhs, rhs) => {
 		const lhsPriority = lhs.labels.nodes.find((label) => priorities.includes(label.name))?.name || ""
 		const rhsPriority = rhs.labels.nodes.find((label) => priorities.includes(label.name))?.name || ""

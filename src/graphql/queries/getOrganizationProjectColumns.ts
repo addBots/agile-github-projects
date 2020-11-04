@@ -26,6 +26,10 @@ export interface IIssue {
 	labels: IConnection<ILabel>
 }
 
+export interface IIssueWithCardID extends IIssue {
+	cardId: string
+}
+
 export interface IIssueWithMetaData extends IIssue {
 	columnName: string
 	storyPoints: number | null

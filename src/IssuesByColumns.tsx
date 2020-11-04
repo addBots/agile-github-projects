@@ -1,9 +1,13 @@
-import { Card, Col, Tag } from "antd"
-import React from "react"
+import { Card, Dropdown, Menu, Spin, Tag } from "antd"
+import React, { useCallback } from "react"
 import styled from "styled-components"
 import { FlexCol, StickyCard } from "./common/BoardComponents"
 import { useConfig } from "./config"
-import { useOrganizationProjectColumns } from "./graphql/queries/getOrganizationProjectColumns"
+import { useMoveProjectCards } from "./graphql/mutations/moveProjectCards"
+import { IProjectColumn, useOrganizationProjectColumns } from "./graphql/queries/getOrganizationProjectColumns"
+import { filterNull } from "./utils"
+import { sortIssuesByPriority } from "./utils/issueSort"
+import { DownOutlined } from "@ant-design/icons"
 
 const IssueCard = styled(Card)`
 	margin-top: 4px;
@@ -31,7 +35,7 @@ interface IIssuesByColumnsProps {
 export const IssuesByColumns = ({ organization, project }: IIssuesByColumnsProps) => {
 	const config = useConfig()
 
-	const { data, loading, error } = useOrganizationProjectColumns(organization, parseInt(project), {
+	const { data } = useOrganizationProjectColumns(organization, parseInt(project), {
 		pollInterval: config.behavior.pollInterval,
 	})
 
@@ -39,7 +43,14 @@ export const IssuesByColumns = ({ organization, project }: IIssuesByColumnsProps
 		<>
 			{data?.map((column) => (
 				<FlexCol span={5} key={column.id}>
-					<StickyCard title={column.name} bordered={false}>
+					<StickyCard
+						title={
+							<div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+								{column.name} <ColumnActions column={column} />
+							</div>
+						}
+						bordered={false}
+					>
 						{(column.cards.nodes || []).map((issue) => (
 							<IssueCard title={issue.content?.title} bordered key={issue.id}>
 								<div>
@@ -55,5 +66,49 @@ export const IssuesByColumns = ({ organization, project }: IIssuesByColumnsProps
 				</FlexCol>
 			))}
 		</>
+	)
+}
+
+interface IColumnActionsProps {
+	column: IProjectColumn
+}
+
+const ColumnActions = ({ column }: IColumnActionsProps) => {
+	const [moveProjectCards, { isLoading: isMovingCards }] = useMoveProjectCards()
+
+	const onClickSortByPriority = useCallback(async () => {
+		const issuesSorted = sortIssuesByPriority(
+			column.cards.nodes
+				.map((node) => (node.content ? { ...node.content, cardId: node.id } : null))
+				.filter(filterNull),
+			["priority:high", "priority:mid", "priority:low"],
+		).filter((issue) => issue.labels.nodes.some((label) => label.name.startsWith("priority:")))
+
+		await moveProjectCards(
+			issuesSorted.map((issue, idx) => ({
+				afterCardId: idx === 0 ? null : issuesSorted[idx - 1].id,
+				cardId: issue.cardId,
+				columnId: column.id,
+			})),
+		)
+	}, [moveProjectCards, column])
+
+	const overlay = (
+		<Menu>
+			<Menu.Item onClick={onClickSortByPriority}>Sort by Priority</Menu.Item>
+		</Menu>
+	)
+
+	return (
+		<div style={{ alignSelf: "flex-end", marginLeft: "auto" }}>
+			{isMovingCards && <Spin />}
+			{!isMovingCards && (
+				<Dropdown overlay={overlay}>
+					<span style={{ color: "#1890ff" }}>
+						Actions <DownOutlined />
+					</span>
+				</Dropdown>
+			)}
+		</div>
 	)
 }

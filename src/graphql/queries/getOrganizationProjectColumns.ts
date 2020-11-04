@@ -14,6 +14,7 @@ export interface IUser {
 export interface ILabel {
 	id: string
 	name: string
+	color: string
 }
 
 export interface IIssue {
@@ -23,6 +24,10 @@ export interface IIssue {
 	url: string
 	assignees: IConnection<IUser>
 	labels: IConnection<ILabel>
+}
+
+export interface IIssueWithCardID extends IIssue {
+	cardId: string
 }
 
 export interface IIssueWithMetaData extends IIssue {
@@ -85,6 +90,7 @@ export const GET_ORGANIZATION_PROJECT_ITEMS = gql`
 											nodes {
 												id
 												name
+												color
 											}
 										}
 									}
@@ -103,6 +109,7 @@ export const GET_ORGANIZATION_PROJECT_ITEMS = gql`
 											nodes {
 												id
 												name
+												color
 											}
 										}
 									}

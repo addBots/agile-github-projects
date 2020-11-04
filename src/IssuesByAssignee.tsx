@@ -1,38 +1,12 @@
 import React, { useMemo } from "react"
 import { useOrganizationProjectColumns, IIssueWithMetaData } from "./graphql/queries/getOrganizationProjectColumns"
-import { Col, Row, Card, Popover, Button } from "antd"
+import { Popover, Button } from "antd"
 import { flattenDeep, unionBy, uniq } from "lodash"
 import { filterUndefined, filterNull, mapColumnToColor } from "./utils"
 import styled from "styled-components"
 import { useConfig } from "./config"
 import { getIssueSize } from "./utils/issueSize"
-
-const FlexCol = styled(Col)`
-	width: auto !important;
-	flex: 1 1 0px !important;
-	flex-basis: 150px !important;
-	flex-grow: 1 !important;
-	margin: 0px 10px;
-`
-
-const StickyCard = styled(Card)`
-	& .ant-card-head {
-		top: -20px;
-		position: sticky;
-		min-height: 32px;
-		background-color: white;
-	}
-
-	& .ant-card-head-title {
-		padding: 10px 0;
-	}
-`
-
-const Container = styled.div`
-	background: #ececec;
-	padding: 20px 10px;
-	overflow-y: auto;
-`
+import { FlexCol, StickyCard } from "./common/BoardComponents"
 
 const OverallStoryPoints = styled.div`
 	position: absolute;
@@ -48,12 +22,9 @@ interface IProjectProps {
 
 export const IssuesByAssignee: React.FC<IProjectProps> = ({ organization, project, columnNames }) => {
 	const config = useConfig()
-	const {
-		behavior: { pollInterval },
-	} = useConfig()
 
 	const { data, loading, error } = useOrganizationProjectColumns(organization, parseInt(project), {
-		pollInterval,
+		pollInterval: config.behavior.pollInterval,
 	})
 
 	const { users, issuesByUsername } = useMemo<{
@@ -118,30 +89,28 @@ export const IssuesByAssignee: React.FC<IProjectProps> = ({ organization, projec
 	if (loading) return <p>Loading...</p>
 
 	return (
-		<Container>
-			<Row>
-				{users.map((username) => (
-					<FlexCol span={5} key={username}>
-						<StickyCard
-							title={<CardHeader username={username} issues={issuesByUsername.get(username) || []} />}
-							bordered={false}
-						>
-							{(issuesByUsername.get(username) || []).map((issue) => (
-								<p key={issue.id}>
-									<a
-										target="_blank"
-										rel="noopener noreferrer"
-										href={issue.url}
-										style={{ color: mapColumnToColor(issue.columnName) }}
-									>
-										{`${issue.title}`}
-									</a>
-								</p>
-							))}
-						</StickyCard>
-					</FlexCol>
-				))}
-			</Row>
+		<>
+			{users.map((username) => (
+				<FlexCol span={5} key={username}>
+					<StickyCard
+						title={<CardHeader username={username} issues={issuesByUsername.get(username) || []} />}
+						bordered={false}
+					>
+						{(issuesByUsername.get(username) || []).map((issue) => (
+							<p key={issue.id}>
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={issue.url}
+									style={{ color: mapColumnToColor(issue.columnName) }}
+								>
+									{`${issue.title}`}
+								</a>
+							</p>
+						))}
+					</StickyCard>
+				</FlexCol>
+			))}
 			<OverallStoryPoints>
 				<div>{`Overall Storypoints: ${overallStoryPoints}`}</div>
 				<Popover
@@ -164,7 +133,7 @@ export const IssuesByAssignee: React.FC<IProjectProps> = ({ organization, projec
 					>{`${issuesWithoutStoryPoints.length} issues without storypoints`}</Button>
 				</Popover>
 			</OverallStoryPoints>
-		</Container>
+		</>
 	)
 }
 

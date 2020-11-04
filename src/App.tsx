@@ -12,6 +12,7 @@ import { CenteredSpin } from "./common/CenteredSpin"
 import { BoardView } from "./BoardView"
 import { IssuesByAssignee } from "./IssuesByAssignee"
 import { IssuesByLabels } from "./IssuesByLabels"
+import { IssuesByColumns } from "./IssuesByColumns"
 
 seedCache()
 
@@ -82,6 +83,14 @@ const Routing: React.FC = () => {
 												organization={props.organization}
 												project={props.project}
 												labelNames={props.labels}
+											/>
+										)
+									} else if (props.view === "columns") {
+										console.log(props)
+										return (
+											<IssuesByColumns
+												organization={props.organization}
+												project={props.project}
 											/>
 										)
 									}

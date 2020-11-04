@@ -1,55 +1,24 @@
 import React, { useMemo } from "react"
-import { useParams } from "react-router"
 import { flattenDeep } from "lodash"
 import { useOrganizationProjectColumns, IIssueWithMetaData } from "./graphql/queries/getOrganizationProjectColumns"
 import { labelsFromProjectColumns, mapColumnToColor, filterNull } from "./utils"
-import styled from "styled-components"
-import { Row, Card, Col } from "antd"
 import { useConfig } from "./config"
-import { IProjectRoute } from "./types/RouteParams"
 import { getIssueSize } from "./utils/issueSize"
-
-const FlexCol = styled(Col)`
-	width: auto !important;
-	flex: 1 1 0px !important;
-	flex-basis: 150px !important;
-	flex-grow: 1 !important;
-	margin: 0px 10px;
-	min-width: 250px;
-	margin-bottom: 20px;
-`
-
-const StickyCard = styled(Card)`
-	& .ant-card-head {
-		top: -20px;
-		position: sticky;
-		min-height: 32px;
-		background-color: white;
-	}
-
-	& .ant-card-head-title {
-		padding: 10px 0;
-	}
-`
-
-const Container = styled.div`
-	background: #ececec;
-	padding: 20px 10px;
-	overflow-y: auto;
-`
+import { FlexCol, StickyCard } from "./common/BoardComponents"
 
 interface IProjectProps {
+	organization: string
+	project: string
 	labelNames: string[]
 }
 
-export const IssuesByLabels: React.FC<IProjectProps> = ({ labelNames }) => {
-	const { projectNumber } = useParams<IProjectRoute>()
+export const IssuesByLabels: React.FC<IProjectProps> = ({ organization, project, labelNames }) => {
 	const config = useConfig()
 	const {
 		behavior: { pollInterval },
 	} = useConfig()
 
-	const { data, loading, error } = useOrganizationProjectColumns("addBots", parseInt(projectNumber!), {
+	const { data, loading, error } = useOrganizationProjectColumns(organization, parseInt(project), {
 		pollInterval,
 	})
 
@@ -96,27 +65,25 @@ export const IssuesByLabels: React.FC<IProjectProps> = ({ labelNames }) => {
 	if (loading) return <p>Loading...</p>
 
 	return (
-		<Container>
-			<Row>
-				{labels.map((label) => (
-					<FlexCol span={5} key={label}>
-						<StickyCard title={label} bordered={false}>
-							{(issuesByLabel.get(label) || []).map((issue) => (
-								<p key={issue.id}>
-									<a
-										target="_blank"
-										rel="noopener noreferrer"
-										href={issue.url}
-										style={{ color: mapColumnToColor(issue.columnName) }}
-									>
-										{issue.title}
-									</a>
-								</p>
-							))}
-						</StickyCard>
-					</FlexCol>
-				))}
-			</Row>
-		</Container>
+		<>
+			{labels.map((label) => (
+				<FlexCol span={5} key={label}>
+					<StickyCard title={label} bordered={false}>
+						{(issuesByLabel.get(label) || []).map((issue) => (
+							<p key={issue.id}>
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={issue.url}
+									style={{ color: mapColumnToColor(issue.columnName) }}
+								>
+									{issue.title}
+								</a>
+							</p>
+						))}
+					</StickyCard>
+				</FlexCol>
+			))}
+		</>
 	)
 }

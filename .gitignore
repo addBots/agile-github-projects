@@ -13,9 +13,6 @@ bundle
 
 *.tgz
 
-*.sh
-!scripts/*.sh
-
 # dependencies
 node_modules
 
@@ -37,5 +34,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .npmrc
-*.sh
 *.tgz
+
+deploy.sh

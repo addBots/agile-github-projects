@@ -86,7 +86,6 @@ const Routing: React.FC = () => {
 											/>
 										)
 									} else if (props.view === "columns") {
-										console.log(props)
 										return (
 											<IssuesByColumns
 												organization={props.organization}

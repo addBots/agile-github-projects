@@ -1,4 +1,4 @@
-import { Card, Dropdown, Menu, Spin, Tag } from "antd"
+import { Card, Dropdown, Menu, message, Spin, Tag } from "antd"
 import React, { useCallback } from "react"
 import styled from "styled-components"
 import { FlexCol, StickyCard } from "./common/BoardComponents"
@@ -74,7 +74,26 @@ interface IColumnActionsProps {
 }
 
 const ColumnActions = ({ column }: IColumnActionsProps) => {
-	const [moveProjectCards, { isLoading: isMovingCards }] = useMoveProjectCards()
+	const [moveProjectCards, { isLoading: isMovingCards }] = useMoveProjectCards({
+		onMutate: () => {
+			message.loading({
+				content: `Sorting project column ${column.name}`,
+				key: "isMovingCards",
+			})
+		},
+		onSuccess: () => {
+			message.success({
+				content: `Successfully sorted project column ${column.name}`,
+				key: "isMovingCards",
+			})
+		},
+		onError: () => {
+			message.error({
+				content: `Sorting project column ${column.name} failed`,
+				key: "isMovingCards",
+			})
+		},
+	})
 
 	const onClickSortByPriority = useCallback(async () => {
 		const issuesSorted = sortIssuesByPriority(
